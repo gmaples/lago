@@ -72,7 +72,7 @@ sudo usermod -aG docker gitpod
 # Set permissions on Docker socket to allow non-root access
 # 666 permissions allow read/write access for all users
 echo "Setting Docker socket permissions..."
-sudo chmod 666 /var/run/docker.sock
+  sudo chmod 666 /var/run/docker.sock
 
 # -----------------------------------------------------------------------------
 # Verify Installation

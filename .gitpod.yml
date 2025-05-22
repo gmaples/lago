@@ -22,6 +22,10 @@ tasks:
       source .env
       set +a
       
+      # Initialize git submodules
+      echo "Initializing git submodules..."
+      git submodule update --init --recursive
+      
       # Start Docker and run Lago
       bash .gitpod.docker-init.sh
       docker compose up --build -d
