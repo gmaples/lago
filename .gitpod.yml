@@ -5,13 +5,28 @@ image:
   file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
 
 tasks:
-  - name: Start Docker and Run Lago  # Label for this task (shown in Gitpod UI).
+  - name: Setup Environment and Start Lago  # Label for this task (shown in Gitpod UI).
     init: |
-      bash .gitpod.docker-init.sh  # This runs a shell script to start the Docker daemon inside the Gitpod container (Docker is not running by default).
-      docker-compose up --build -d  # This command builds and starts all Docker services defined in docker-compose.yml in detached mode (-d).
+      # Generate and set up environment variables if they don't exist
+      if [ ! -f .env ]; then
+        echo "Setting up environment variables..."
+        echo "LAGO_RSA_PRIVATE_KEY=\"$(openssl genrsa 2048 | base64)\"" > .env
+      fi
+      
+      # Source the environment variables
+      set -a
+      source .env
+      set +a
+      
+      # Start Docker and run Lago
+      bash .gitpod.docker-init.sh
+      docker compose up --build -d
     command: |
-      docker ps  # This displays running containers in the terminal once init is complete, so the developer knows things are working.
+      echo "Environment setup complete. Checking container status..."
+      docker ps
 
 ports:
-  - port: 8000  # Exposes port 8000 to the Gitpod interface (useful if Lago’s backend or API listens here).
-    onOpen: open-preview  # Automatically opens the service on port 8000 in Gitpod's preview browser tab when the workspace is ready.
+  - port: 80  # Frontend port
+    onOpen: open-preview
+  - port: 3000  # API port
+    onOpen: open-preview
