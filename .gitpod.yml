@@ -1,0 +1,24 @@
+# This is the main Gitpod configuration file.
+# It controls the base image, how the workspace initializes, which tasks run, and which ports are exposed.
+
+image:
+  file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
+
+tasks:
+  - name: Start Docker and Run Lago  # Label for this task (shown in Gitpod UI).
+    init: |
+      bash .gitpod.docker-init.sh  # This runs a shell script to start the Docker daemon inside the Gitpod container (Docker is not running by default).
+      docker-compose up --build -d  # This command builds and starts all Docker services defined in docker-compose.yml in detached mode (-d).
+    command: |
+      docker ps  # This displays running containers in the terminal once init is complete, so the developer knows things are working.
+
+github:
+  prebuilds:
+    master: true  # Enables Gitpod to prebuild the workspace on the `master` branch (speeds up workspace launch by building in advance).
+    branches: true  # Enables prebuilds on all other branches as well.
+    pullRequests: true  # Enables prebuilds when someone creates a PR against your repo — the workspace will be ready with all dependencies built.
+    addCheck: true  # Adds a "Gitpod ready" status check to PRs, letting reviewers know that a working Gitpod environment is available.
+
+ports:
+  - port: 8000  # Exposes port 8000 to the Gitpod interface (useful if Lago’s backend or API listens here).
+    onOpen: open-preview  # Automatically opens the service on port 8000 in Gitpod's preview browser tab when the workspace is ready.
