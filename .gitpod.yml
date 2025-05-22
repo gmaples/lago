@@ -45,6 +45,15 @@ tasks:
       echo "Environment setup complete. Checking container status..."
       docker ps
 
+  - name: View Logs
+    command: docker compose logs -f
+
+  - name: Run Tests
+    command: docker compose run --rm api bundle exec rspec
+
+  - name: Database Reset
+    command: docker compose run --rm api bundle exec rails db:reset
+
 # Configure ports with automatic previews and notifications
 ports:
   - port: 80  # Frontend port
@@ -72,12 +81,9 @@ vscode:
 
 # Configure environment variables
 env:
-  - name: NODE_ENV
-    value: development
-  - name: EDITOR
-    value: code
-  - name: GP_PREVIEW_BROWSER
-    value: external
+  NODE_ENV: development
+  EDITOR: code
+  GP_PREVIEW_BROWSER: external
 
 # Add custom commands for common tasks
 commands:
@@ -85,9 +91,3 @@ commands:
     command: docker compose up -d
   - name: Stop Development
     command: docker compose down
-  - name: View Logs
-    command: docker compose logs -f
-  - name: Run Tests
-    command: docker compose run --rm api bundle exec rspec
-  - name: Database Reset
-    command: docker compose run --rm api bundle exec rails db:reset
