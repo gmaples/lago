@@ -11,6 +11,10 @@ tasks:
       if [ ! -f .env ]; then
         echo "Setting up environment variables..."
         echo "LAGO_RSA_PRIVATE_KEY=\"$(openssl genrsa 2048 | base64)\"" > .env
+        echo "LAGO_DISABLE_SEGMENT=true" >> .env
+        echo "LAGO_DISABLE_WALLET_REFRESH=true" >> .env
+        echo "LAGO_REDIS_CACHE_PASSWORD=" >> .env
+        echo "LAGO_AWS_S3_ENDPOINT=" >> .env
       fi
       
       # Source the environment variables
