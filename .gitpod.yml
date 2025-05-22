@@ -12,13 +12,6 @@ tasks:
     command: |
       docker ps  # This displays running containers in the terminal once init is complete, so the developer knows things are working.
 
-github:
-  prebuilds:
-    master: true  # Enables Gitpod to prebuild the workspace on the `master` branch (speeds up workspace launch by building in advance).
-    branches: true  # Enables prebuilds on all other branches as well.
-    pullRequests: true  # Enables prebuilds when someone creates a PR against your repo — the workspace will be ready with all dependencies built.
-    addCheck: true  # Adds a "Gitpod ready" status check to PRs, letting reviewers know that a working Gitpod environment is available.
-
 ports:
   - port: 8000  # Exposes port 8000 to the Gitpod interface (useful if Lago’s backend or API listens here).
     onOpen: open-preview  # Automatically opens the service on port 8000 in Gitpod's preview browser tab when the workspace is ready.
