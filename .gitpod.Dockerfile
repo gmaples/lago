@@ -8,6 +8,4 @@ RUN sudo apt-get update && \
     # Ensure the 'docker' group exists
     sudo groupadd -f docker && \
     # Add the 'gitpod' user to the 'docker' group
-    sudo usermod -aG docker gitpod && \
-    # Fix permissions on the Docker socket (useful for some systems)
-    sudo chmod 666 /var/run/docker.sock
+    sudo usermod -aG docker gitpod
