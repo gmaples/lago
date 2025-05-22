@@ -4,6 +4,22 @@
 image:
   file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
 
+# Enable prebuilds for faster workspace startup
+prebuilds:
+  enable: true
+  master: true
+  branches: true
+  pullRequests: true
+  addBadge: true
+  addComment: true
+  addLabel: true
+
+# Configure workspace snapshots
+snapshots:
+  enabled: true
+  maxSnapshots: 5
+  maxAge: 7d
+
 tasks:
   - name: Setup Environment and Start Lago  # Label for this task (shown in Gitpod UI).
     init: |
@@ -29,8 +45,49 @@ tasks:
       echo "Environment setup complete. Checking container status..."
       docker ps
 
+# Configure ports with automatic previews and notifications
 ports:
   - port: 80  # Frontend port
     onOpen: open-preview
+    name: Frontend
+    description: Lago Frontend Application
+    visibility: public
   - port: 3000  # API port
     onOpen: open-preview
+    name: API
+    description: Lago API Documentation
+    visibility: public
+
+# Add VS Code extensions for better development experience
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - ms-azuretools.vscode-docker
+    - ms-vscode.vscode-typescript-tslint-plugin
+    - redhat.vscode-yaml
+    - ruby-lsp
+    - github.copilot
+    - github.copilot-chat
+
+# Configure environment variables
+env:
+  - name: NODE_ENV
+    value: development
+  - name: EDITOR
+    value: code
+  - name: GP_PREVIEW_BROWSER
+    value: external
+
+# Add custom commands for common tasks
+commands:
+  - name: Start Development
+    command: docker compose up -d
+  - name: Stop Development
+    command: docker compose down
+  - name: View Logs
+    command: docker compose logs -f
+  - name: Run Tests
+    command: docker compose run --rm api bundle exec rspec
+  - name: Database Reset
+    command: docker compose run --rm api bundle exec rails db:reset
