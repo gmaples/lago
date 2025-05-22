@@ -4,22 +4,6 @@
 image:
   file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
 
-# Enable prebuilds for faster workspace startup
-prebuilds:
-  enable: true
-  master: true
-  branches: true
-  pullRequests: true
-  addBadge: true
-  addComment: true
-  addLabel: true
-
-# Configure workspace snapshots
-snapshots:
-  enabled: true
-  maxSnapshots: 5
-  maxAge: 7d
-
 tasks:
   - name: Setup Environment and Start Lago  # Label for this task (shown in Gitpod UI).
     init: |
@@ -84,10 +68,3 @@ env:
   NODE_ENV: development
   EDITOR: code
   GP_PREVIEW_BROWSER: external
-
-# Add custom commands for common tasks
-commands:
-  - name: Start Development
-    command: docker compose up -d
-  - name: Stop Development
-    command: docker compose down
