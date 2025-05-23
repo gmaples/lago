@@ -74,6 +74,8 @@ services:
       - LAGO_DISABLE_SIGNUP=${LAGO_DISABLE_SIGNUP:-}
       - LAGO_DISABLE_PDF_GENERATION=${LAGO_DISABLE_PDF_GENERATION:-false}
       - NANGO_SECRET_KEY=${NANGO_SECRET_KEY:-}
+    ports:
+      - "8080:8080"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`app.lago.dev`)"
@@ -304,5 +306,10 @@ services:
       dockerfile: $LAGO_PATH/api/Dockerfile.dev
     volumes:
       - $LAGO_PATH/api:/app:delegated
+    env_file:
+      - path: ./.env.development.default
+      - path: ./.env.development
+        required: false
     environment:
+      - RAILS_ENV=development
       - DATABASE_URL=postgresql://${POSTGRES_USER:-lago}:${POSTGRES_PASSWORD:-changeme}@db:5432/${POSTGRES_DB:-lago}
