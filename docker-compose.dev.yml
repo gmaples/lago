@@ -66,14 +66,19 @@ services:
       - $LAGO_PATH/front:/app:delegated
       - front_node_modules_dev:/app/node_modules:delegated
       - front_dist_dev:/app/dist:delegated
+    env_file:
+      - path: ./.env.gitpod
+        required: false
     environment:
       - NODE_ENV=development
-      - API_URL=https://api.lago.dev
-      - APP_DOMAIN=https://app.lago.dev
+      - API_URL=https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}
+      - APP_DOMAIN=https://8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}
       - CODEGEN_API=http://api:3000/graphql
       - LAGO_DISABLE_SIGNUP=${LAGO_DISABLE_SIGNUP:-}
       - LAGO_DISABLE_PDF_GENERATION=${LAGO_DISABLE_PDF_GENERATION:-false}
       - NANGO_SECRET_KEY=${NANGO_SECRET_KEY:-}
+      - GITPOD_WORKSPACE_ID=${GITPOD_WORKSPACE_ID}
+      - GITPOD_WORKSPACE_CLUSTER_HOST=${GITPOD_WORKSPACE_CLUSTER_HOST}
     ports:
       - "8080:8080"
     labels:
@@ -105,6 +110,11 @@ services:
       - DATABASE_TEST_URL=postgresql://${POSTGRES_USER:-lago}:${POSTGRES_PASSWORD:-changeme}@db:5432/lago_test
       - GOOGLE_AUTH_CLIENT_ID=${GOOGLE_AUTH_CLIENT_ID:-}
       - GOOGLE_AUTH_CLIENT_SECRET=${GOOGLE_AUTH_CLIENT_SECRET:-}
+      - LAGO_WEBHOOK_ATTEMPTS=0
+      - GITPOD_WORKSPACE_ID=${GITPOD_WORKSPACE_ID}
+      - GITPOD_WORKSPACE_CLUSTER_HOST=${GITPOD_WORKSPACE_CLUSTER_HOST}
+    ports:
+      - "3000:3000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api_http.rule=Host(`api.lago.dev`)"
