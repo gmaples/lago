@@ -58,14 +58,128 @@ ports:
 # Add VS Code extensions for better development experience
 vscode:
   extensions:
+    # JavaScript/TypeScript Development
     - dbaeumer.vscode-eslint
     - esbenp.prettier-vscode
+    - ms-vscode.vscode-typescript-next
+    
+    # Ruby/Rails Development
+    - shopify.ruby-lsp
+    - rebornix.ruby
+    - wingrunr21.vscode-ruby
+    - kaiwood.endwise
+    - castwide.solargraph
+    - misogi.ruby-rubocop
+    - connorshea.vscode-ruby-test-adapter
+    - hridoy.rails-snippets
+    - aki77.rails-db-schema
+    - bung87.rails
+    - vasyl-purchel.rails-i18n
+    - vortizhe.simple-ruby-erb
+    - bradlc.vscode-tailwindcss
+    
+    # Database and API Development
     - ms-azuretools.vscode-docker
-    - ms-vscode.vscode-typescript-tslint-plugin
-    - redhat.vscode-yaml
-    - ruby-lsp
+    - ckolkman.vscode-postgres
+    - humao.rest-client
+    - rangav.vscode-thunder-client
+    
+    # Testing and Debugging
+    - formulahendry.code-runner
+    - ms-vscode.test-adapter-converter
+    - ryanluker.vscode-coverage-gutters
+    
+    # Git and Version Control
+    - eamodio.gitlens
+    - github.vscode-pull-request-github
+    - donjayamanne.githistory
+    
+    # AI and Code Assistance
     - github.copilot
     - github.copilot-chat
+    - continue.continue
+    - anthropic.claude-dev
+    - codeium.codeium
+    
+    # File Management and Utilities
+    - redhat.vscode-yaml
+    - ms-vscode.vscode-json
+    - bradlc.vscode-tailwindcss
+    - formulahendry.auto-rename-tag
+    - christian-kohler.path-intellisense
+    - ms-vscode.live-server
+
+# IntelliJ IDEA Gateway configuration for JetBrains users
+jetbrains:
+  intellij:
+    plugins:
+      # Ruby/Rails Development
+      - ruby
+      - rails
+      - erb-support
+      - haml
+      - sass-support
+      
+      # GraphQL Development
+      - lang-graphql
+      - graphql-schema-viewer
+      - apollo-studio
+      - js-graphql-intellij-plugin
+      
+      # Database Support
+      - database-tools
+      - postgresql
+      - redis
+      
+      # Web Development
+      - javascript
+      - typescript
+      - nodejs
+      - html-tools
+      - css-support
+      
+      # Testing and Quality
+      - rspec
+      - cucumber
+      - rubocop
+      - code-coverage
+      
+      # Test Automation and Advanced Testing
+      - test-management
+      - selenium-testing
+      - junit
+      - testng
+      - mockito
+      - factory-bot
+      - capybara-testing
+      - test-results-reporter
+      - automated-testing-framework
+      
+      # Version Control
+      - git
+      - github
+      
+      # AI and Code Assistance
+      - github-copilot
+      - codegpt
+      
+      # Docker and DevOps
+      - docker
+      - kubernetes
+      - yaml
+      
+      # Productivity
+      - rest-client
+      - database-navigator
+      - string-manipulation
+      - rainbow-brackets
+    
+    # Configure JVM options for better performance
+    vmoptions: '-Xmx4g -XX:+UseG1GC'
+    
+    # Enable prebuilds for faster indexing
+    prebuilds:
+      version: stable
 
 # Configure environment variables
 env:
