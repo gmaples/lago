@@ -109,6 +109,17 @@ vscode:
     - christian-kohler.path-intellisense
     - ms-vscode.live-server
 
+  # Terminal configuration to force bash usage
+  settings:
+    terminal.integrated.shell.linux: "/bin/bash"
+    terminal.integrated.defaultProfile.linux: "bash"
+    terminal.integrated.profiles.linux:
+      bash:
+        path: "/bin/bash"
+        args: ["--noprofile", "--norc"]
+    terminal.integrated.automationShell.linux: "/bin/bash"
+    terminal.integrated.shellIntegration.enabled: false
+
 # IntelliJ IDEA Gateway configuration for JetBrains users
 jetbrains:
   intellij:
