@@ -26,8 +26,6 @@
 #   2 - Docker service failed to start
 #   3 - Permission configuration failed
 #
-# Author: Lago Team
-# Last Updated: 2024
 # =============================================================================
 
 set -e  # Exit immediately if a command exits with a non-zero status

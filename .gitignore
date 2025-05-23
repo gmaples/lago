@@ -5,6 +5,155 @@
 .rsa_private.pem
 .vscode
 .zed
+
+# Ruby/Rails specific
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+/log/*
+!/log/.keep
+/vendor/
+/vendor/bundle/
+.bundle/
+.ruby-version
+.ruby-gemset
+.rvmrc
+.rbenv-version
+.powenv
+Gemfile.lock
+.byebug_history
+.irb_history
+.pry_history
+
+# Rails specific
+*.rbc
+capybara-*.html
+.rspec
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/db/*.sqlite3-*
+/public/system
+/public/uploads
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+/tmp/pids/
+/tmp/cache/
+/tmp/sockets/
+/public/assets
+.sass-cache/
+config/master.key
+config/credentials/*.key
+
+# Node.js/NPM/Yarn/PNPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.npm
+.eslintcache
+.nyc_output
+.pnpm-store/
+.pnpm-lock.yaml
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.vercel/
+.netlify/
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+junit.xml
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Docker
+*.log
+.docker/
+docker-compose.override.yml
+
+# JetBrains IDEs (IntelliJ IDEA, RubyMine, WebStorm, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.idea_modules/
+
+# JetBrains IDE user-specific files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# JetBrains IDE sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# JetBrains Gateway cache
+.idea/**/remote-targets.xml
+
+# IntelliJ IDEA modules and build artifacts
+*.iml
+modules.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/artifacts/
+.idea/jarRepositories.xml
+
+# JetBrains coverage reports
+.idea/**/coverage/
+
+# JetBrains plugin development
+.idea/**/gradle.xml
+.idea/**/libraries/
+.idea/**/kotlinc.xml
+
 /extra/ssl/certbot
 /extra/ssl/dhparam.pem
 /extra/ssl/nginx*
