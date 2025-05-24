@@ -59,7 +59,7 @@ Read more first-hand experiences from Qonto, Algolia, Pleo, Segment, or the 350+
 
 **Open-source, open architecture:**
 - Composable: connect Lago to any of your internal systems or tools (i.e. any payment gateway, CRM, CPQ, accounting software);
-- Pricing: we’re not rent seekers, we’re not asking for a % of your revenue. Our self-hosted version is free. Our cloud version is priced like a SaaS;
+- Pricing: we're not rent seekers, we're not asking for a % of your revenue. Our self-hosted version is free. Our cloud version is priced like a SaaS;
 - Privacy: your data never has to leave your infrastructure.
 
 ## ✨ Features
@@ -68,7 +68,7 @@ Read more first-hand experiences from Qonto, Algolia, Pleo, Segment, or the 350+
 - **[Coupons](https://www.getlago.com/products/coupons)**: Create engaging marketing campaigns and increase conversion with coupons that customers can redeem to get a discount.
 - **[Add-ons](https://www.getlago.com/products/add-on)**: Why wait until the end of the billing cycle to get paid? Lago allows you to create one-time charges that are invoiced on the fly.
 - **[Invoicing](https://www.getlago.com/products/invoicing)**: Depending on the configuration of your plans, Lago automatically calculates what each customer owes you and generates invoices.
-- **[Prepaid credits](https://www.getlago.com/products/prepaid-credits)**: Unlock recurring revenue opportunities for pay-as-you-go pricing models with Lago’s prepaid credit features.
+- **[Prepaid credits](https://www.getlago.com/products/prepaid-credits)**: Unlock recurring revenue opportunities for pay-as-you-go pricing models with Lago's prepaid credit features.
 
 ## 🔔 Stay up to date
 Lago launched its v0.1 on June 2nd, 2022. Lots of new features are coming, and are generally released on a bi-weekly basis. Watch updates of this repository to be notified of future updates.
@@ -126,6 +126,34 @@ docker compose up
 docker compose up
 ```
 
+### 🏥 Health Check and Development Tools (New!)
+
+For development and troubleshooting, we've created a comprehensive health check system that replaces all legacy startup scripts:
+
+```bash
+# Comprehensive startup with health validation (recommended for development)
+./lago_health_check.sh
+
+# Quick health check on running services
+./lago_health_check.sh --check-only
+
+# Restart everything with full validation
+./lago_health_check.sh --restart
+
+# Verbose debugging mode
+./lago_health_check.sh --verbose
+```
+
+**Features:**
+- ✅ **Idempotent execution** - Safe to run multiple times
+- ✅ **Comprehensive testing** - Validates all 18+ services, ports, connectivity
+- ✅ **CORS error detection** - Catches cross-origin issues
+- ✅ **End-to-end validation** - Tests complete functionality
+- ✅ **Automatic recovery** - Cleans up and restarts failed services
+- ✅ **Detailed logging** - Provides extensive debugging information
+
+See [`README_HEALTH_CHECK.md`](./README_HEALTH_CHECK.md) for complete documentation.
+
 You can now open your browser and go to http://localhost to connect to the application. Lago's API is exposed at http://localhost:3000.
 
 Note that if our docker server is not at http://localhost, the following env variables must be set: `LAGO_API_URL`. This may be on the command line or in your .env file. For example:
@@ -157,8 +185,8 @@ Contact our team at hello@getlago.com to get started with Lago Cloud. More infor
 
 ## 🚀 Getting the most out of Lago
 - See the [documentation](https://doc.getlago.com) to learn more about all the features;
-- Use our [templates](https://www.getlago.com/resources/templates/all) to get inspiration and learn how to reproduce Algolia’s, Segment’s and Klaviyo’s pricing models;
-- Join our [Slack community](https://www.getlago.com/slack) if you need help, or want to chat, we’re here to help;
+- Use our [templates](https://www.getlago.com/resources/templates/all) to get inspiration and learn how to reproduce Algolia's, Segment's and Klaviyo's pricing models;
+- Join our [Slack community](https://www.getlago.com/slack) if you need help, or want to chat, we're here to help;
 - Contribute on GitHub: read our [guidelines](https://github.com/getlago/lago/blob/main/CONTRIBUTING.md);
 - Follow us on [Twitter](https://twitter.com/GetLago) for the latest news;
 - You can email us as well: hello@getlago.com.
@@ -172,10 +200,10 @@ You can contribute by following our [guidelines](https://github.com/getlago/lago
 ## 💡 Philosophy
 B2B SaaS has evolved, but billing has not yet.
 
-### 1- We’re not in the “subscription economy” anymore. And we won’t go “full usage-based pricing” quite yet
-Pricings are now mostly hybrid: they include a usage-based component (i.e. “if you use more you pay more”) and a subscription component (i.e. a recurring fee for basic usage).
+### 1- We're not in the "subscription economy" anymore. And we won't go "full usage-based pricing" quite yet
+Pricings are now mostly hybrid: they include a usage-based component (i.e. "if you use more you pay more") and a subscription component (i.e. a recurring fee for basic usage).
 
-Not all software companies will go full “usage-based” like Snowflake for instance. This model is the new standard for cloud infrastructure products. However, in other areas of SaaS, users want to know beforehand how much they will pay to control their spending and software companies want to be able to predict recurring revenues.
+Not all software companies will go full "usage-based" like Snowflake for instance. This model is the new standard for cloud infrastructure products. However, in other areas of SaaS, users want to know beforehand how much they will pay to control their spending and software companies want to be able to predict recurring revenues.
 
 ### 2- Go-to-market is not either bottom-up or top-down anymore
 SaaS used to be either self-service (SMBs) or sales-led (Enterprises).
@@ -183,11 +211,11 @@ Go-to-market now mixes the self-service (all customers access the same price pla
 A typical journey involves an individual contributor in a company who tests a new tool, puts their corporate credit card in, and starts spreading the use of the tool within the organization. At that point, the VP or head of department might want to upgrade to a custom plan tailored to the needs of the whole organization.
 As a result, billing needs to be flexible, automated, and transparent enough to embrace this hybrid go-to-market motion as well.
 
-### 3- The “rent seeker” pricing of current billing solutions needs to stop
+### 3- The "rent seeker" pricing of current billing solutions needs to stop
 Why do payment companies take a cut on revenues?
 Because the higher the amount, the higher the risk for them (e.g. fraud, disputes, etc.).
 
-Why did billing companies adopt the same pricing structure? We’re not able to provide an answer that makes sense. It’s been said on the internet that they did this because they could (read more [here](https://news.ycombinator.com/item?id=16766846)).
+Why did billing companies adopt the same pricing structure? We're not able to provide an answer that makes sense. It's been said on the internet that they did this because they could (read more [here](https://news.ycombinator.com/item?id=16766846)).
 
 ### One last thing…
-Lago is agnostic and we aim at being as transparent as possible, so we won’t nudge or lock you into using a specific tool in exchange for using our billing API ([learn more](https://www.gmass.co/blog/negotiating-stripe-fees/)).
+Lago is agnostic and we aim at being as transparent as possible, so we won't nudge or lock you into using a specific tool in exchange for using our billing API ([learn more](https://www.gmass.co/blog/negotiating-stripe-fees/)).
