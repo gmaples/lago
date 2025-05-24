@@ -6,6 +6,10 @@
 
 echo "=== Lago Development Environment Startup ==="
 
+# Load all Gitpod environment variables
+echo "Loading Gitpod environment variables..."
+eval $(gp env -e)
+
 # Set required environment variables
 export LAGO_PATH="/workspace/lago"
 
@@ -22,6 +26,8 @@ fi
 # Display current environment variables
 echo "Environment variables:"
 echo "  LAGO_PATH: $LAGO_PATH"
+echo "  SECRET_KEY_BASE: ${SECRET_KEY_BASE:0:20}... (user-level)"
+echo "  LAGO_ENCRYPTION_PRIMARY_KEY: ${LAGO_ENCRYPTION_PRIMARY_KEY} (user-level)"
 echo "  GITPOD_WORKSPACE_ID: $GITPOD_WORKSPACE_ID"
 echo "  GITPOD_WORKSPACE_CLUSTER_HOST: $GITPOD_WORKSPACE_CLUSTER_HOST"
 echo
