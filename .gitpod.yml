@@ -4,48 +4,120 @@
 image:
   file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
 
+# Prebuild tasks - these run during workspace image creation
+# NO Docker commands or service startup should happen here
 tasks:
-  - name: Setup Environment and Start Lago  # Label for this task (shown in Gitpod UI).
+  - name: Environment Setup (Prebuild)
     init: |
-      # Generate and set up environment variables if they don't exist
+      echo "=== Lago Gitpod Prebuild Setup ==="
+      
+      # Initialize git submodules with robust error handling
+      echo "Initializing git submodules..."
+      bash fix_git_submodules.sh
+      
+      # Create environment files if they don't exist
+      echo "Setting up environment files..."
       if [ ! -f .env ]; then
-        echo "Setting up environment variables..."
-        echo "LAGO_RSA_PRIVATE_KEY=\"$(openssl genrsa 2048 | base64)\"" > .env
+        echo "Creating .env file..."
+        echo "LAGO_RSA_PRIVATE_KEY=\"$(openssl genrsa 2048 | base64 | tr -d '\n')\"" > .env
         echo "LAGO_DISABLE_SEGMENT=true" >> .env
         echo "LAGO_DISABLE_WALLET_REFRESH=true" >> .env
         echo "LAGO_REDIS_CACHE_PASSWORD=" >> .env
         echo "LAGO_AWS_S3_ENDPOINT=" >> .env
       fi
       
-      # Source the environment variables
-      set -a
-      source .env
-      set +a
+      # Create development environment file
+      if [ ! -f .env.development.default ]; then
+        echo "Creating .env.development.default file..."
+        bash setup_and_restart_fixed.sh || echo "Setup script not available, creating basic env file"
+      fi
       
-      # Initialize git submodules
-      echo "Initializing git submodules..."
-      git submodule update --init --recursive
+      # Set up persistent environment in bashrc
+      echo "Setting up persistent environment variables..."
+      if ! grep -q "LAGO_PATH" ~/.bashrc; then
+        echo 'export LAGO_PATH="/workspace/lago"' >> ~/.bashrc
+      fi
       
-      # Start Docker and run Lago
-      bash .gitpod.docker-init.sh
-      docker compose up --build -d
+      echo "Prebuild setup complete!"
+      
+    # Runtime command - this runs when the workspace starts
     command: |
-      echo "Environment setup complete. Checking container status..."
-      docker ps
+      echo "=== Lago Development Environment Startup ==="
+      
+      # Source environment variables
+      export LAGO_PATH="/workspace/lago"
+      source ~/.bashrc
+      
+      # Initialize Docker (this only works at runtime, not during prebuild)
+      echo "Initializing Docker..."
+      bash .gitpod.docker-init.sh
+      
+      # Wait for Docker to be ready
+      echo "Waiting for Docker to be ready..."
+      timeout=30
+      while ! docker info >/dev/null 2>&1 && [ $timeout -gt 0 ]; do
+        echo "Waiting for Docker... ($timeout seconds remaining)"
+        sleep 2
+        timeout=$((timeout-2))
+      done
+      
+      if ! docker info >/dev/null 2>&1; then
+        echo "ERROR: Docker failed to start. Please run manually:"
+        echo "  sudo service docker start"
+        echo "  bash start_lago_dev.sh up -d"
+        exit 1
+      fi
+      
+      echo "Docker is ready! Starting Lago development environment..."
+      
+      # Use the existing startup script
+      bash start_lago_dev.sh up -d
+      
+      echo ""
+      echo "🚀 Lago development environment is starting!"
+      echo "   Frontend: https://8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      echo "   API: https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      echo ""
+      echo "Use 'docker compose logs -f' to view logs"
+      echo "Use 'docker compose ps' to check container status"
 
   - name: View Logs
-    command: docker compose logs -f
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml logs -f
+
+  - name: Container Status
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml ps
+
+  - name: Restart Services
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      echo "Restarting Lago services..."
+      docker compose -f docker-compose.dev.yml down
+      docker compose -f docker-compose.dev.yml up -d
+      echo "Services restarted!"
 
   - name: Run Tests
-    command: docker compose run --rm api bundle exec rspec
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml run --rm api bundle exec rspec
 
   - name: Database Reset
-    command: docker compose run --rm api bundle exec rails db:reset
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml run --rm api bundle exec rails db:reset
 
 # Configure ports with automatic previews and notifications
 ports:
   - port: 80  # Frontend port
-    onOpen: open-preview
+    onOpen: ignore
     name: Frontend
     description: Lago Frontend Application
     visibility: public
@@ -55,7 +127,7 @@ ports:
     description: Lago Frontend Development Server
     visibility: public
   - port: 3000  # API port
-    onOpen: open-preview
+    onOpen: ignore
     name: API
     description: Lago API Documentation
     visibility: public
@@ -114,9 +186,7 @@ vscode:
     - christian-kohler.path-intellisense
     - ms-vscode.live-server
 
-# Note: Terminal configuration has been removed as 'settings' is not allowed in .gitpod.yml
-
-# IntelliJ IDEA Gateway configuration for JetBrains users
+# JetBrains IDEA Gateway configuration for JetBrains users
 jetbrains:
   intellij:
     plugins:

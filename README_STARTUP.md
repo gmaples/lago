@@ -1,5 +1,7 @@
 # Lago Development Environment Startup Guide
 
+> **For Gitpod Prebuild Issues**: See [README_GITPOD_PREBUILD.md](README_GITPOD_PREBUILD.md) for detailed prebuild troubleshooting and configuration information.
+
 ## Quick Start (Post-Reboot/New Shell)
 
 If you're starting fresh after a reboot or in a new shell, use this command to ensure all environment variables are properly set:
