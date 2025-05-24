@@ -49,6 +49,11 @@ ports:
     name: Frontend
     description: Lago Frontend Application
     visibility: public
+  - port: 8080  # Frontend development port
+    onOpen: open-preview
+    name: Frontend Dev
+    description: Lago Frontend Development Server
+    visibility: public
   - port: 3000  # API port
     onOpen: open-preview
     name: API
@@ -109,16 +114,7 @@ vscode:
     - christian-kohler.path-intellisense
     - ms-vscode.live-server
 
-  # Terminal configuration to force bash usage
-  settings:
-    terminal.integrated.shell.linux: "/bin/bash"
-    terminal.integrated.defaultProfile.linux: "bash"
-    terminal.integrated.profiles.linux:
-      bash:
-        path: "/bin/bash"
-        args: ["--noprofile", "--norc"]
-    terminal.integrated.automationShell.linux: "/bin/bash"
-    terminal.integrated.shellIntegration.enabled: false
+# Note: Terminal configuration has been removed as 'settings' is not allowed in .gitpod.yml
 
 # IntelliJ IDEA Gateway configuration for JetBrains users
 jetbrains:
