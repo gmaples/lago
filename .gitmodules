@@ -1,6 +1,6 @@
 [submodule "api"]
-	path = api
-	url = https://github.com/getlago/lago-api.git
+        path = api
+        url = https://github.com/gmaples/lago-api.git
 [submodule "front"]
-	path = front
-	url = https://github.com/getlago/lago-front.git
+        path = front
+        url = https://github.com/gmaples/lago-front.git
