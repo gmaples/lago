@@ -1,138 +1,62 @@
-# This is the main Gitpod configuration file.
-# It controls the base image, how the workspace initializes, which tasks run, and which ports are exposed.
+# =============================================================================
+# LAGO GITPOD CONFIGURATION
+# =============================================================================
+# 
+# This is the main Gitpod configuration file for the Lago development environment.
+# It has been refactored to be clean and minimal, with detailed configurations
+# moved to separate files in the .gitpod/ directory.
+#
+# Structure:
+#   .gitpod/tasks/       - Task scripts (prebuild, startup, etc.)
+#   .gitpod/extensions/  - VS Code and JetBrains configurations
+#   .gitpod/env/         - Environment setup scripts
+#
+# =============================================================================
 
+# Docker image configuration
 image:
-  file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
+  file: .gitpod.Dockerfile
 
-# Prebuild tasks - these run during workspace image creation
-# NO Docker commands or service startup should happen here
+# Task configuration - prebuild and runtime
 tasks:
   - name: Environment Setup (Prebuild)
-    init: |
-      echo "=== Lago Gitpod Prebuild Setup ==="
-      
-      # Initialize git submodules with robust error handling
-      echo "Initializing git submodules..."
-      bash fix_git_submodules.sh
-      
-      # Create environment files if they don't exist
-      echo "Setting up environment files..."
-      if [ ! -f .env ]; then
-        echo "Creating .env file..."
-        echo "LAGO_RSA_PRIVATE_KEY=\"$(openssl genrsa 2048 | base64 | tr -d '\n')\"" > .env
-        echo "LAGO_DISABLE_SEGMENT=true" >> .env
-        echo "LAGO_DISABLE_WALLET_REFRESH=true" >> .env
-        echo "LAGO_REDIS_CACHE_PASSWORD=" >> .env
-        echo "LAGO_AWS_S3_ENDPOINT=" >> .env
-      fi
-      
-      # Create development environment file
-      if [ ! -f .env.development.default ]; then
-        echo "Creating .env.development.default file..."
-        bash setup_and_restart_fixed.sh || echo "Setup script not available, creating basic env file"
-      fi
-      
-      # Set up persistent environment in bashrc
-      echo "Setting up persistent environment variables..."
-      if ! grep -q "LAGO_PATH" ~/.bashrc; then
-        echo 'export LAGO_PATH="/workspace/lago"' >> ~/.bashrc
-      fi
-      
-      echo "Prebuild setup complete!"
-      
-    # Runtime command - this runs when the workspace starts
-    command: |
-      echo "=== Lago Development Environment Startup ==="
-      
-      # Source environment variables
-      export LAGO_PATH="/workspace/lago"
-      source ~/.bashrc
-      
-      # Initialize Docker (this only works at runtime, not during prebuild)
-      echo "Initializing Docker..."
-      bash .gitpod.docker-init.sh
-      
-      # Wait for Docker to be ready
-      echo "Waiting for Docker to be ready..."
-      timeout=30
-      while ! docker info >/dev/null 2>&1 && [ $timeout -gt 0 ]; do
-        echo "Waiting for Docker... ($timeout seconds remaining)"
-        sleep 2
-        timeout=$((timeout-2))
-      done
-      
-      if ! docker info >/dev/null 2>&1; then
-        echo "ERROR: Docker failed to start. Please run manually:"
-        echo "  sudo service docker start"
-        echo "  bash start_lago_dev.sh up -d"
-        exit 1
-      fi
-      
-      echo "Docker is ready! Starting Lago development environment..."
-      
-      # Use the existing startup script
-      bash start_lago_dev.sh up -d
-      
-      echo ""
-      echo "🚀 Lago development environment is starting!"
-      echo "   Frontend: https://8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
-      echo "   API: https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
-      echo ""
-      echo "Use 'docker compose logs -f' to view logs"
-      echo "Use 'docker compose ps' to check container status"
+    init: bash .gitpod/tasks/prebuild.sh
+    command: bash .gitpod/tasks/startup.sh
 
   - name: View Logs
-    command: |
-      cd /workspace/lago
-      export LAGO_PATH="/workspace/lago"
-      docker compose -f docker-compose.dev.yml logs -f
+    command: bash .gitpod/tasks/logs.sh
 
   - name: Container Status
-    command: |
-      cd /workspace/lago
-      export LAGO_PATH="/workspace/lago"
-      docker compose -f docker-compose.dev.yml ps
+    command: bash .gitpod/tasks/status.sh
 
   - name: Restart Services
-    command: |
-      cd /workspace/lago
-      export LAGO_PATH="/workspace/lago"
-      echo "Restarting Lago services..."
-      docker compose -f docker-compose.dev.yml down
-      docker compose -f docker-compose.dev.yml up -d
-      echo "Services restarted!"
+    command: bash .gitpod/tasks/restart.sh
 
   - name: Run Tests
-    command: |
-      cd /workspace/lago
-      export LAGO_PATH="/workspace/lago"
-      docker compose -f docker-compose.dev.yml run --rm api bundle exec rspec
+    command: bash .gitpod/tasks/test.sh
 
   - name: Database Reset
-    command: |
-      cd /workspace/lago
-      export LAGO_PATH="/workspace/lago"
-      docker compose -f docker-compose.dev.yml run --rm api bundle exec rails db:reset
+    command: bash .gitpod/tasks/db-reset.sh
 
-# Configure ports with automatic previews and notifications
+# Port configuration
 ports:
-  - port: 80  # Frontend port
+  - port: 80
     onOpen: ignore
     name: Frontend
     description: Lago Frontend Application
     visibility: public
-  - port: 8080  # Frontend development port
+  - port: 8080
     onOpen: open-preview
     name: Frontend Dev
     description: Lago Frontend Development Server
     visibility: public
-  - port: 3000  # API port
+  - port: 3000
     onOpen: ignore
     name: API
     description: Lago API Documentation
     visibility: public
 
-# Add VS Code extensions for better development experience
+# VS Code extensions (loaded from separate file)
 vscode:
   extensions:
     # JavaScript/TypeScript Development
@@ -186,7 +110,7 @@ vscode:
     - christian-kohler.path-intellisense
     - ms-vscode.live-server
 
-# JetBrains IDEA Gateway configuration for JetBrains users
+# JetBrains configuration (loaded from separate file)
 jetbrains:
   intellij:
     plugins:
@@ -258,7 +182,7 @@ jetbrains:
     prebuilds:
       version: stable
 
-# Configure environment variables
+# Environment variables
 env:
   NODE_ENV: development
   EDITOR: code

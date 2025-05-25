@@ -1,0 +1,74 @@
+# JetBrains IDEA Gateway Configuration for Lago Development
+# This file contains all JetBrains plugins and settings for optimal
+# Lago development experience in IntelliJ IDEA.
+
+jetbrains:
+  intellij:
+    plugins:
+      # Ruby/Rails Development
+      - ruby
+      - rails
+      - erb-support
+      - haml
+      - sass-support
+      
+      # GraphQL Development
+      - lang-graphql
+      - graphql-schema-viewer
+      - apollo-studio
+      - js-graphql-intellij-plugin
+      
+      # Database Support
+      - database-tools
+      - postgresql
+      - redis
+      
+      # Web Development
+      - javascript
+      - typescript
+      - nodejs
+      - html-tools
+      - css-support
+      
+      # Testing and Quality
+      - rspec
+      - cucumber
+      - rubocop
+      - code-coverage
+      
+      # Test Automation and Advanced Testing
+      - test-management
+      - selenium-testing
+      - junit
+      - testng
+      - mockito
+      - factory-bot
+      - capybara-testing
+      - test-results-reporter
+      - automated-testing-framework
+      
+      # Version Control
+      - git
+      - github
+      
+      # AI and Code Assistance
+      - github-copilot
+      - codegpt
+      
+      # Docker and DevOps
+      - docker
+      - kubernetes
+      - yaml
+      
+      # Productivity
+      - rest-client
+      - database-navigator
+      - string-manipulation
+      - rainbow-brackets
+    
+    # Configure JVM options for better performance
+    vmoptions: '-Xmx4g -XX:+UseG1GC'
+    
+    # Enable prebuilds for faster indexing
+    prebuilds:
+      version: stable 

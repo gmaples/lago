@@ -1,0 +1,265 @@
+# This is the main Gitpod configuration file.
+# It controls the base image, how the workspace initializes, which tasks run, and which ports are exposed.
+
+image:
+  file: .gitpod.Dockerfile  # Specifies that Gitpod should build and use the Docker image defined in .gitpod.Dockerfile in this repository.
+
+# Prebuild tasks - these run during workspace image creation
+# NO Docker commands or service startup should happen here
+tasks:
+  - name: Environment Setup (Prebuild)
+    init: |
+      echo "=== Lago Gitpod Prebuild Setup ==="
+      
+      # Initialize git submodules with robust error handling
+      echo "Initializing git submodules..."
+      bash fix_git_submodules.sh
+      
+      # Create environment files if they don't exist
+      echo "Setting up environment files..."
+      if [ ! -f .env ]; then
+        echo "Creating .env file..."
+        echo "LAGO_RSA_PRIVATE_KEY=\"$(openssl genrsa 2048 | base64 | tr -d '\n')\"" > .env
+        echo "LAGO_DISABLE_SEGMENT=true" >> .env
+        echo "LAGO_DISABLE_WALLET_REFRESH=true" >> .env
+        echo "LAGO_REDIS_CACHE_PASSWORD=" >> .env
+        echo "LAGO_AWS_S3_ENDPOINT=" >> .env
+      fi
+      
+      # Create development environment file
+      if [ ! -f .env.development.default ]; then
+        echo "Creating .env.development.default file..."
+        bash setup_and_restart_fixed.sh || echo "Setup script not available, creating basic env file"
+      fi
+      
+      # Set up persistent environment in bashrc
+      echo "Setting up persistent environment variables..."
+      if ! grep -q "LAGO_PATH" ~/.bashrc; then
+        echo 'export LAGO_PATH="/workspace/lago"' >> ~/.bashrc
+      fi
+      
+      echo "Prebuild setup complete!"
+      
+    # Runtime command - this runs when the workspace starts
+    command: |
+      echo "=== Lago Development Environment Startup ==="
+      
+      # Source environment variables
+      export LAGO_PATH="/workspace/lago"
+      source ~/.bashrc
+      
+      # Initialize Docker (this only works at runtime, not during prebuild)
+      echo "Initializing Docker..."
+      bash .gitpod.docker-init.sh
+      
+      # Wait for Docker to be ready
+      echo "Waiting for Docker to be ready..."
+      timeout=30
+      while ! docker info >/dev/null 2>&1 && [ $timeout -gt 0 ]; do
+        echo "Waiting for Docker... ($timeout seconds remaining)"
+        sleep 2
+        timeout=$((timeout-2))
+      done
+      
+      if ! docker info >/dev/null 2>&1; then
+        echo "ERROR: Docker failed to start. Please run manually:"
+        echo "  sudo service docker start"
+        echo "  bash start_lago_dev.sh up -d"
+        exit 1
+      fi
+      
+      echo "Docker is ready! Starting Lago development environment..."
+      
+      # Use the existing startup script
+      bash start_lago_dev.sh up -d
+      
+      echo ""
+      echo "🚀 Lago development environment is starting!"
+      echo "   Frontend: https://8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      echo "   API: https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      echo ""
+      echo "Use 'docker compose logs -f' to view logs"
+      echo "Use 'docker compose ps' to check container status"
+
+  - name: View Logs
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml logs -f
+
+  - name: Container Status
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml ps
+
+  - name: Restart Services
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      echo "Restarting Lago services..."
+      docker compose -f docker-compose.dev.yml down
+      docker compose -f docker-compose.dev.yml up -d
+      echo "Services restarted!"
+
+  - name: Run Tests
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml run --rm api bundle exec rspec
+
+  - name: Database Reset
+    command: |
+      cd /workspace/lago
+      export LAGO_PATH="/workspace/lago"
+      docker compose -f docker-compose.dev.yml run --rm api bundle exec rails db:reset
+
+# Configure ports with automatic previews and notifications
+ports:
+  - port: 80  # Frontend port
+    onOpen: ignore
+    name: Frontend
+    description: Lago Frontend Application
+    visibility: public
+  - port: 8080  # Frontend development port
+    onOpen: open-preview
+    name: Frontend Dev
+    description: Lago Frontend Development Server
+    visibility: public
+  - port: 3000  # API port
+    onOpen: ignore
+    name: API
+    description: Lago API Documentation
+    visibility: public
+
+# Add VS Code extensions for better development experience
+vscode:
+  extensions:
+    # JavaScript/TypeScript Development
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - ms-vscode.vscode-typescript-next
+    
+    # Ruby/Rails Development
+    - shopify.ruby-lsp
+    - rebornix.ruby
+    - wingrunr21.vscode-ruby
+    - kaiwood.endwise
+    - castwide.solargraph
+    - misogi.ruby-rubocop
+    - connorshea.vscode-ruby-test-adapter
+    - hridoy.rails-snippets
+    - aki77.rails-db-schema
+    - bung87.rails
+    - vasyl-purchel.rails-i18n
+    - vortizhe.simple-ruby-erb
+    - bradlc.vscode-tailwindcss
+    
+    # Database and API Development
+    - ms-azuretools.vscode-docker
+    - ckolkman.vscode-postgres
+    - humao.rest-client
+    - rangav.vscode-thunder-client
+    
+    # Testing and Debugging
+    - formulahendry.code-runner
+    - ms-vscode.test-adapter-converter
+    - ryanluker.vscode-coverage-gutters
+    
+    # Git and Version Control
+    - eamodio.gitlens
+    - github.vscode-pull-request-github
+    - donjayamanne.githistory
+    
+    # AI and Code Assistance
+    - github.copilot
+    - github.copilot-chat
+    - continue.continue
+    - anthropic.claude-dev
+    - codeium.codeium
+    
+    # File Management and Utilities
+    - redhat.vscode-yaml
+    - ms-vscode.vscode-json
+    - bradlc.vscode-tailwindcss
+    - formulahendry.auto-rename-tag
+    - christian-kohler.path-intellisense
+    - ms-vscode.live-server
+
+# JetBrains IDEA Gateway configuration for JetBrains users
+jetbrains:
+  intellij:
+    plugins:
+      # Ruby/Rails Development
+      - ruby
+      - rails
+      - erb-support
+      - haml
+      - sass-support
+      
+      # GraphQL Development
+      - lang-graphql
+      - graphql-schema-viewer
+      - apollo-studio
+      - js-graphql-intellij-plugin
+      
+      # Database Support
+      - database-tools
+      - postgresql
+      - redis
+      
+      # Web Development
+      - javascript
+      - typescript
+      - nodejs
+      - html-tools
+      - css-support
+      
+      # Testing and Quality
+      - rspec
+      - cucumber
+      - rubocop
+      - code-coverage
+      
+      # Test Automation and Advanced Testing
+      - test-management
+      - selenium-testing
+      - junit
+      - testng
+      - mockito
+      - factory-bot
+      - capybara-testing
+      - test-results-reporter
+      - automated-testing-framework
+      
+      # Version Control
+      - git
+      - github
+      
+      # AI and Code Assistance
+      - github-copilot
+      - codegpt
+      
+      # Docker and DevOps
+      - docker
+      - kubernetes
+      - yaml
+      
+      # Productivity
+      - rest-client
+      - database-navigator
+      - string-manipulation
+      - rainbow-brackets
+    
+    # Configure JVM options for better performance
+    vmoptions: '-Xmx4g -XX:+UseG1GC'
+    
+    # Enable prebuilds for faster indexing
+    prebuilds:
+      version: stable
+
+# Configure environment variables
+env:
+  NODE_ENV: development
+  EDITOR: code
+  GP_PREVIEW_BROWSER: external

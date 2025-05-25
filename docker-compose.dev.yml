@@ -194,6 +194,9 @@ services:
     <<: *api_worker
     container_name: lago_api_events_consumer_dev
     command: bash -c "bundle install && ./scripts/start.events.consumer.sh"
+    environment:
+      - LAGO_KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
+      - LAGO_KAFKA_EVENTS_CHARGED_IN_ADVANCE_TOPIC=events_charged_in_advance
 
   events-processor:
     image: events-processor_dev

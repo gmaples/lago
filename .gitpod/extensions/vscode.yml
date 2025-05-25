@@ -1,0 +1,55 @@
+# VS Code Extensions for Lago Development
+# This file contains all VS Code extensions that will be automatically
+# installed in the Gitpod workspace for an optimal development experience.
+
+extensions:
+  # JavaScript/TypeScript Development
+  - dbaeumer.vscode-eslint
+  - esbenp.prettier-vscode
+  - ms-vscode.vscode-typescript-next
+  
+  # Ruby/Rails Development
+  - shopify.ruby-lsp
+  - rebornix.ruby
+  - wingrunr21.vscode-ruby
+  - kaiwood.endwise
+  - castwide.solargraph
+  - misogi.ruby-rubocop
+  - connorshea.vscode-ruby-test-adapter
+  - hridoy.rails-snippets
+  - aki77.rails-db-schema
+  - bung87.rails
+  - vasyl-purchel.rails-i18n
+  - vortizhe.simple-ruby-erb
+  - bradlc.vscode-tailwindcss
+  
+  # Database and API Development
+  - ms-azuretools.vscode-docker
+  - ckolkman.vscode-postgres
+  - humao.rest-client
+  - rangav.vscode-thunder-client
+  
+  # Testing and Debugging
+  - formulahendry.code-runner
+  - ms-vscode.test-adapter-converter
+  - ryanluker.vscode-coverage-gutters
+  
+  # Git and Version Control
+  - eamodio.gitlens
+  - github.vscode-pull-request-github
+  - donjayamanne.githistory
+  
+  # AI and Code Assistance
+  - github.copilot
+  - github.copilot-chat
+  - continue.continue
+  - anthropic.claude-dev
+  - codeium.codeium
+  
+  # File Management and Utilities
+  - redhat.vscode-yaml
+  - ms-vscode.vscode-json
+  - bradlc.vscode-tailwindcss
+  - formulahendry.auto-rename-tag
+  - christian-kohler.path-intellisense
+  - ms-vscode.live-server 
