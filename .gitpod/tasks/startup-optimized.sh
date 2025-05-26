@@ -1,36 +1,24 @@
 #!/bin/bash
 # =============================================================================
-# GITPOD RUNTIME STARTUP SCRIPT
+# GITPOD OPTIMIZED STARTUP SCRIPT
 # =============================================================================
 # 
-# This script runs when the workspace starts at runtime. It initializes Docker,
-# sets up the environment, and starts the Lago development services.
-#
-# IMPORTANT: This runs during workspace startup. If issues occur, user needs
-# immediate diagnostic information and recovery commands since AI assistant
-# may not be immediately available.
+# This script runs when the workspace starts at runtime. Since Docker images
+# and dependencies are pre-cached during prebuild, startup should be
+# lightning fast (under 30 seconds).
 #
 # =============================================================================
 
 set -euo pipefail
 
-# Setup logging
-LOG_FILE="/workspace/lago/startup.log"
-exec 1> >(tee -a "$LOG_FILE")
-exec 2> >(tee -a "$LOG_FILE" >&2)
-
-echo "============================================================================="
-echo "🚀 LAGO DEVELOPMENT ENVIRONMENT STARTUP - $(date)"
-echo "============================================================================="
-echo ""
-echo "⏰ Started at: $(date '+%Y-%m-%d %H:%M:%S')"
-echo "📝 Full log: $LOG_FILE"
-echo "🎯 Goal: Start Lago environment using pre-cached images (should be <30 seconds)"
-echo ""
+echo "=== Lago Development Environment Startup (Optimized) ==="
 
 # Source environment variables
 export LAGO_PATH="/workspace/lago"
 source ~/.bashrc
+
+# Record start time for performance measurement
+start_time=$(date +%s)
 
 # Initialize Docker (this only works at runtime, not during prebuild)
 echo "Initializing Docker..."
@@ -52,18 +40,31 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Docker is ready! Starting Lago development environment..."
+echo ""
+echo "🚀 Docker ready! Starting pre-cached Lago environment..."
+echo "   Images should already be built and cached from prebuild"
+echo ""
 
 # Since images are pre-cached, this should be lightning fast
-echo "🚀 Using pre-cached images for fast startup..."
+echo "⚡ Using pre-cached images for fast startup..."
 
 # Use idempotent start (only starts what's needed)
 ./gitpod-script/lago_health_check.sh --start-only
 
+# Calculate startup time
+end_time=$(date +%s)
+startup_duration=$((end_time - start_time))
+
 echo ""
-echo "🚀 Lago development environment is starting!"
+echo "🎉 Lago development environment started successfully!"
+echo "⏱️  Total startup time: ${startup_duration} seconds"
+echo ""
+echo "🌐 URLs:"
 echo "   Frontend: https://8080-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
 echo "   API: https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
 echo ""
-echo "Use './gitpod-script/lago_health_check.sh --check-only' to verify status"
-echo "Use 'docker compose logs -f' to view logs" 
+echo "🛠️  Useful commands:"
+echo "   ./gitpod-script/lago_health_check.sh --check-only  # Verify status"
+echo "   docker compose logs -f                           # View logs"
+echo "   ./gitpod-script/lago_health_check.sh --restart    # Full restart if needed"
+echo "" 

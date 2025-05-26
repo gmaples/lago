@@ -4,9 +4,8 @@
 # =============================================================================
 # 
 # This script runs during workspace image creation (prebuild phase).
-# IMPORTANT: NO Docker commands should be executed here as Docker is not
-# available during prebuild. This script prepares the environment and files
-# that will be needed when the workspace starts at runtime.
+# This script prepares the environment, files, and pre-caches Docker images
+# for lightning-fast workspace startup.
 #
 # =============================================================================
 
@@ -44,5 +43,9 @@ echo "Setting up persistent environment variables..."
 if ! grep -q "LAGO_PATH" ~/.bashrc; then
   echo 'export LAGO_PATH="/workspace/lago"' >> ~/.bashrc
 fi
+
+# Run warm cache operations to pre-build Docker images
+echo "Running Docker warm cache operations..."
+bash .gitpod/tasks/warm-cache.sh
 
 echo "Prebuild setup complete!" 

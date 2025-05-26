@@ -21,7 +21,7 @@ image:
 tasks:
   - name: Environment Setup (Prebuild)
     init: bash .gitpod/tasks/prebuild.sh
-    command: bash .gitpod/tasks/startup.sh
+    command: bash .gitpod/tasks/startup-verbose.sh
 
   - name: View Logs
     command: bash .gitpod/tasks/logs.sh
