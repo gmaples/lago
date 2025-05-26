@@ -66,9 +66,6 @@ services:
       - $LAGO_PATH/front:/app:delegated
       - front_node_modules_dev:/app/node_modules:delegated
       - front_dist_dev:/app/dist:delegated
-    env_file:
-      - path: ./.env.gitpod
-        required: false
     environment:
       - NODE_ENV=development
       - API_URL=https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}
