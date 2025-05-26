@@ -28,14 +28,14 @@ if [ ! -f .env ]; then
   echo "LAGO_AWS_S3_ENDPOINT=" >> .env
 fi
 
-# Create development environment file
+# Create development environment file if it doesn't exist
 if [ ! -f .env.development.default ]; then
   echo "Creating .env.development.default file..."
-  if [ -f setup_and_restart_fixed.sh ]; then
-    bash setup_and_restart_fixed.sh || echo "Setup script failed, creating basic env file"
-  else
-    echo "Setup script not available, creating basic env file"
-  fi
+  # Use default development configuration
+  cp .env.development.default.example .env.development.default 2>/dev/null || {
+    echo "Creating basic development configuration..."
+    echo "# Default development environment" > .env.development.default
+  }
 fi
 
 # Set up persistent environment in bashrc
