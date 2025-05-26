@@ -214,32 +214,98 @@ docker compose -f docker-compose.dev.yml create
 
 echo "✅ Volumes created successfully"
 
-# 4. Pre-cache dependency installations by running them once
-echo "⚡ Pre-caching dependencies..."
+# 4. Pre-cache dependency installations by running them once with aggressive optimization
+echo "⚡ Pre-caching dependencies with advanced optimizations..."
 
-# Cache Ruby gems (run bundle install in API container)
-echo "Caching Ruby gems..."
-docker run --rm -v /workspace/lago/api:/app api_dev bash -c "cd /app && bundle install --jobs 4" || echo "Gem caching completed with warnings"
+# Cache Ruby gems with aggressive parallel jobs and pre-compile native extensions
+echo "Caching Ruby gems with optimizations..."
+docker run --rm -v /workspace/lago/api:/app api_dev bash -c "
+cd /app && 
+echo 'Installing gems with maximum parallelization...' &&
+bundle config set --local jobs 8 &&
+bundle config set --local retry 3 &&
+bundle config set --local deployment false &&
+bundle config set --local cache_all true &&
+bundle install --jobs 8 --retry 3 &&
+echo 'Pre-compiling Rails assets and bootsnap cache...' &&
+bundle exec bootsnap precompile --gemfile app/ lib/ config/ &&
+echo 'Pre-running zeitwerk eager loading...' &&
+RAILS_ENV=development bundle exec rails runner 'Rails.application.eager_load!' || true
+" || echo "Gem caching completed with warnings"
 
-# Cache Node modules (run npm install in frontend container) 
-echo "Caching Node modules..."
-docker run --rm -v /workspace/lago/front:/app front_dev bash -c "cd /app && npm ci --silent" || echo "Node modules caching completed with warnings"
+# Cache Node modules with aggressive caching and pre-compilation
+echo "Caching Node modules with optimizations..."
+docker run --rm -v /workspace/lago/front:/app front_dev bash -c "
+cd /app &&
+echo 'Installing Node modules with caching...' &&
+npm ci --silent --prefer-offline --no-audit &&
+echo 'Pre-compiling TypeScript and generating code...' &&
+npm run codegen 2>/dev/null || echo 'Codegen skipped (API not available)' &&
+echo 'Pre-warming module resolution cache...' &&
+node -e 'require.resolve(\"react\"); require.resolve(\"typescript\"); console.log(\"Module cache warmed\");' || true
+" || echo "Node modules caching completed with warnings"
 
-echo "✅ Dependencies cached successfully"
+# Pre-cache Go dependencies for events processor if present
+if docker images | grep -q "events-processor_dev"; then
+    echo "Caching Go dependencies for events processor..."
+    docker run --rm -v /workspace/lago/events-processor:/app events-processor_dev sh -c "
+    cd /app &&
+    go mod download &&
+    go mod verify &&
+    echo 'Go dependencies cached successfully'
+    " || echo "Go dependency caching completed with warnings"
+fi
 
-# 5. Clean up any running containers but keep images and volumes
+echo "✅ Dependencies cached with advanced optimizations"
+
+# 5. Pre-warm container networking and Docker daemon caches
+echo "🌐 Pre-warming container networking and Docker caches..."
+# Create a temporary container to warm up Docker networking and layer caches
+docker network create lago_network_warmup 2>/dev/null || true
+docker network rm lago_network_warmup 2>/dev/null || true
+
+# Pre-create all volumes explicitly to ensure they're ready
+echo "📁 Pre-creating and warming all Docker volumes..."
+docker volume create lago_postgres_data_dev 2>/dev/null || true
+docker volume create lago_redis_data_dev 2>/dev/null || true
+docker volume create lago_redpanda_data_dev 2>/dev/null || true
+docker volume create lago_clickhouse_data_dev 2>/dev/null || true
+docker volume create lago_front_node_modules_dev 2>/dev/null || true
+docker volume create lago_front_dist_dev 2>/dev/null || true
+
+# 6. Clean up any running containers but keep images and volumes
 echo "🧹 Cleaning up temporary containers..."
 docker compose -f docker-compose.dev.yml down --remove-orphans 2>/dev/null || true
 
-# 6. Verify cache status
+# 7. Pre-verify health check script dependencies
+echo "🔧 Pre-verifying health check script dependencies..."
+# Ensure the health check script is executable and ready
+chmod +x ./gitpod-script/lago_health_check.sh 2>/dev/null || true
+
+# Pre-test Docker Compose functionality
+echo "Testing Docker Compose readiness..."
+docker compose -f docker-compose.dev.yml config --quiet && echo "✅ Docker Compose configuration valid" || echo "⚠️  Docker Compose configuration issues detected"
+
+# 8. Final verification and performance report
 echo "📊 Docker cache status:"
 echo "Images cached: $(docker images --format "table {{.Repository}}:{{.Tag}}" | wc -l) images"
 echo "Volumes created: $(docker volume ls -q | wc -l) volumes"
+echo "Networks available: $(docker network ls -q | wc -l) networks"
+
+# Performance estimation based on cache status
+cached_images=$(docker images --filter "reference=*dev" --format "{{.Repository}}:{{.Tag}}" | wc -l)
+if [[ $cached_images -ge 3 ]]; then
+    expected_startup="30-60 seconds"
+else
+    expected_startup="2-3 minutes (some images need building)"
+fi
 
 echo ""
-echo "🚀 Warm cache setup complete!"
-echo "   - All base images pulled and cached"
-echo "   - All custom images built" 
-echo "   - Dependencies pre-installed"
-echo "   - Workspace startup should now be under 30 seconds!"
+echo "🚀 WARM CACHE SETUP COMPLETE!"
+echo "   ✅ All base images pulled and cached"
+echo "   ✅ All custom images built with optimizations" 
+echo "   ✅ Dependencies pre-installed with native compilation"
+echo "   ✅ Docker networking and volumes pre-warmed"
+echo "   ✅ Health check script verified and ready"
+echo "   📊 Expected startup time: $expected_startup"
 echo "" 

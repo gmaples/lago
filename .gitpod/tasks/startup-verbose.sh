@@ -26,8 +26,20 @@ echo "🎯 Goal: Start Lago environment using pre-cached images (should be <30 s
 echo ""
 
 # =============================================================================
-echo "🔧 STEP 1: Environment Setup"
+echo "🔧 STEP 1: Environment Setup & Prebuild Detection"
 echo "============================================================================="
+
+# Check for prebuild optimizations
+if [[ -f /workspace/.gitpod_prebuild_complete ]]; then
+    echo "🚀 PREBUILD OPTIMIZATIONS DETECTED!"
+    echo "   Prebuild completed: $(cat /workspace/.gitpod_prebuild_timestamp 2>/dev/null || echo 'timestamp unavailable')"
+    echo "   Expected fast startup (30-60 seconds)"
+    PREBUILD_OPTIMIZED=true
+else
+    echo "⚠️  No prebuild optimizations found - slower startup expected (3-5 minutes)"
+    PREBUILD_OPTIMIZED=false
+fi
+echo ""
 
 # Source environment variables
 echo "📁 Setting up environment variables..."
@@ -40,10 +52,19 @@ else
     echo "⚠️  Warning: ~/.bashrc not found"
 fi
 
+# Check if optimizations are enabled
+if [[ "${LAGO_OPTIMIZATIONS:-}" == "enabled" ]]; then
+    echo "⚡ Performance optimizations enabled!"
+else
+    echo "⚠️  Performance optimizations not found in environment"
+fi
+
 echo "📋 Key environment variables:"
 echo "   LAGO_PATH: $LAGO_PATH"
 echo "   GITPOD_WORKSPACE_ID: ${GITPOD_WORKSPACE_ID:-'not set'}"
 echo "   GITPOD_WORKSPACE_CLUSTER_HOST: ${GITPOD_WORKSPACE_CLUSTER_HOST:-'not set'}"
+echo "   DOCKER_BUILDKIT: ${DOCKER_BUILDKIT:-'not set'}"
+echo "   NODE_OPTIONS: ${NODE_OPTIONS:-'not set'}"
 echo ""
 
 # =============================================================================
