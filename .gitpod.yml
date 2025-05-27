@@ -38,6 +38,9 @@ tasks:
   - name: Database Reset
     command: bash .gitpod/tasks/db-reset.sh
 
+  - name: Verify Optimizations
+    command: bash .gitpod/tasks/verify-optimizations.sh
+
 # Port configuration
 ports:
   - port: 80

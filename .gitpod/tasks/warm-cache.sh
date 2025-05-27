@@ -230,17 +230,19 @@ bundle install --jobs 8 --retry 3 &&
 echo 'Pre-compiling Rails assets and bootsnap cache...' &&
 bundle exec bootsnap precompile --gemfile app/ lib/ config/ &&
 echo 'Pre-running zeitwerk eager loading...' &&
-RAILS_ENV=development bundle exec rails runner 'Rails.application.eager_load!' || true
+RAILS_ENV=development bundle exec rails runner 'puts \"Zeitwerk eager loading skipped - requires DB connection\"' || true
 " || echo "Gem caching completed with warnings"
 
 # Cache Node modules with aggressive caching and pre-compilation
 echo "Caching Node modules with optimizations..."
-docker run --rm -v /workspace/lago/front:/app front_dev bash -c "
+docker run --rm -v /workspace/lago/front:/app -v lago_front_node_modules_dev:/app/node_modules front_dev bash -c "
 cd /app &&
 echo 'Installing Node modules with caching...' &&
-npm ci --silent --prefer-offline --no-audit &&
+pnpm install --frozen-lockfile --prefer-offline &&
+echo 'Verifying React installation...' &&
+node -e 'console.log(\"React version:\", require(\"react/package.json\").version);' &&
 echo 'Pre-compiling TypeScript and generating code...' &&
-npm run codegen 2>/dev/null || echo 'Codegen skipped (API not available)' &&
+pnpm run codegen 2>/dev/null || echo 'Codegen skipped (API not available)' &&
 echo 'Pre-warming module resolution cache...' &&
 node -e 'require.resolve(\"react\"); require.resolve(\"typescript\"); console.log(\"Module cache warmed\");' || true
 " || echo "Node modules caching completed with warnings"

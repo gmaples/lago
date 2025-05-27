@@ -105,7 +105,6 @@ if [ ! -f ~/.docker/config.json ]; then
   cat > ~/.docker/config.json << 'EOF'
 {
   "experimental": "enabled",
-  "buildkit": true,
   "features": {
     "buildkit": true
   }
@@ -123,10 +122,12 @@ echo "Pre-compiling additional assets for faster startup..."
 # Pre-compile frontend assets if possible (without requiring API)
 echo "Pre-compiling frontend assets..."
 if docker images | grep -q "front_dev"; then
-  docker run --rm -v /workspace/lago/front:/app front_dev bash -c "
+  docker run --rm -v /workspace/lago/front:/app -v lago_front_node_modules_dev:/app/node_modules front_dev bash -c "
   cd /app &&
+  echo 'Installing dependencies first...' &&
+  pnpm install --frozen-lockfile --prefer-offline &&
   echo 'Building production-ready assets for development serving...' &&
-  npm run build:development 2>/dev/null || npm run build 2>/dev/null || echo 'Asset compilation skipped - will happen at runtime'
+  pnpm run build:development 2>/dev/null || pnpm run build 2>/dev/null || echo 'Asset compilation skipped - will happen at runtime'
   " || echo "Frontend asset pre-compilation completed with warnings"
 fi
 
