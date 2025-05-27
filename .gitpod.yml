@@ -59,15 +59,22 @@ ports:
     description: Lago API Documentation
     visibility: public
 
-# VS Code extensions (loaded from separate file)
+# VS Code extensions - cleaned up for reliability
 vscode:
   extensions:
+    # Core Language Support
+    - ms-vscode.vscode-typescript-next
+    - ms-vscode.vscode-json
+    - redhat.vscode-yaml
+    
     # JavaScript/TypeScript Development
     - dbaeumer.vscode-eslint
     - esbenp.prettier-vscode
-    - ms-vscode.vscode-typescript-next
+    - bradlc.vscode-tailwindcss
+    - formulahendry.auto-rename-tag
+    - christian-kohler.path-intellisense
     
-    # Ruby/Rails Development
+    # Ruby/Rails Development (reliable extensions only)
     - shopify.ruby-lsp
     - rebornix.ruby
     - wingrunr21.vscode-ruby
@@ -77,10 +84,9 @@ vscode:
     - connorshea.vscode-ruby-test-adapter
     - hridoy.rails-snippets
     - aki77.rails-db-schema
-    - bung87.rails
     - vasyl-purchel.rails-i18n
     - vortizhe.simple-ruby-erb
-    - bradlc.vscode-tailwindcss
+    # NOTE: Removed bung87.rails - causes dependency issues in Gitpod
     
     # Database and API Development
     - ms-azuretools.vscode-docker
@@ -88,9 +94,8 @@ vscode:
     - humao.rest-client
     - rangav.vscode-thunder-client
     
-    # Testing and Debugging
+    # Testing and Development
     - formulahendry.code-runner
-    - ms-vscode.test-adapter-converter
     - ryanluker.vscode-coverage-gutters
     
     # Git and Version Control
@@ -98,19 +103,14 @@ vscode:
     - github.vscode-pull-request-github
     - donjayamanne.githistory
     
-    # AI and Code Assistance
+    # AI and Code Assistance (reliable ones)
     - github.copilot
     - github.copilot-chat
     - continue.continue
-    - anthropic.claude-dev
-    - codeium.codeium
+    # - codeium.codeium
+    # NOTE: Removed anthropic.claude-dev - can cause auth issues
     
-    # File Management and Utilities
-    - redhat.vscode-yaml
-    - ms-vscode.vscode-json
-    - bradlc.vscode-tailwindcss
-    - formulahendry.auto-rename-tag
-    - christian-kohler.path-intellisense
+    # Development Tools
     - ms-vscode.live-server
 
 # JetBrains configuration (loaded from separate file)
