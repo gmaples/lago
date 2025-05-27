@@ -307,21 +307,21 @@ services:
       - 9000:9000
       - 8123:8123
 
-  migrate:
-    container_name: lago-migrate_dev
-    image: api_dev
-    depends_on:
-      - db
-    command: ["./scripts/migrate.dev.sh"]
-    build:
-      context: ./api
-      dockerfile: $LAGO_PATH/api/Dockerfile.dev
-    volumes:
-      - $LAGO_PATH/api:/app:delegated
-    env_file:
-      - path: ./.env.development.default
-      - path: ./.env.development
-        required: false
-    environment:
-      - RAILS_ENV=development
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-lago}:${POSTGRES_PASSWORD:-changeme}@db:5432/${POSTGRES_DB:-lago}
+#  migrate:
+#    container_name: lago-migrate_dev
+#    image: api_dev
+#    depends_on:
+#      - db
+#    command: ["./scripts/migrate.dev.sh"]
+#    build:
+#      context: ./api
+#      dockerfile: $LAGO_PATH/api/Dockerfile.dev
+#    volumes:
+#      - $LAGO_PATH/api:/app:delegated
+#    env_file:
+#     - path: ./.env.development.default
+#      - path: ./.env.development
+#        required: false
+#    environment:
+#      - RAILS_ENV=development
+#      - DATABASE_URL=postgresql://${POSTGRES_USER:-lago}:${POSTGRES_PASSWORD:-changeme}@db:5432/${POSTGRES_DB:-lago}
