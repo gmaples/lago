@@ -64,8 +64,8 @@ vscode:
   extensions:
     # Core Language Support
     - ms-vscode.vscode-typescript-next
-    - ms-vscode.vscode-json
-    - redhat.vscode-yaml
+    # - ms-vscode.vscode-json
+    # - redhat.vscode-yaml
     
     # JavaScript/TypeScript Development
     - dbaeumer.vscode-eslint
@@ -80,11 +80,11 @@ vscode:
     - wingrunr21.vscode-ruby
     - kaiwood.endwise
     - castwide.solargraph
-    - misogi.ruby-rubocop
+    # - misogi.ruby-rubocop
     - connorshea.vscode-ruby-test-adapter
-    - hridoy.rails-snippets
+    # - hridoy.rails-snippets
     - aki77.rails-db-schema
-    - vasyl-purchel.rails-i18n
+    # - vasyl-purchel.rails-i18n
     - vortizhe.simple-ruby-erb
     # NOTE: Removed bung87.rails - causes dependency issues in Gitpod
     
@@ -100,12 +100,12 @@ vscode:
     
     # Git and Version Control
     - eamodio.gitlens
-    - github.vscode-pull-request-github
+    # - github.vscode-pull-request-github
     - donjayamanne.githistory
     
     # AI and Code Assistance (reliable ones)
-    - github.copilot
-    - github.copilot-chat
+    # - github.copilot
+    # - github.copilot-chat
     - continue.continue
     # - codeium.codeium
     # NOTE: Removed anthropic.claude-dev - can cause auth issues
