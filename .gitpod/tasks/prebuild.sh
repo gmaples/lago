@@ -106,7 +106,7 @@ if [ ! -f ~/.docker/config.json ]; then
 {
   "experimental": "enabled",
   "features": {
-    "buildkit": true
+    "buildkit": "enabled"
   }
 }
 EOF

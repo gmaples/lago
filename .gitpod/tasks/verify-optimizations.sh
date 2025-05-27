@@ -83,7 +83,7 @@ else
 fi
 
 if [[ -f ~/.docker/config.json ]]; then
-    if grep -q '"buildkit": true' ~/.docker/config.json 2>/dev/null; then
+    if grep -q '"buildkit": "enabled"' ~/.docker/config.json 2>/dev/null; then
         echo "   ✅ Docker BuildKit optimization enabled"
     else
         echo "   ⚠️  Docker config exists but BuildKit not properly configured"
